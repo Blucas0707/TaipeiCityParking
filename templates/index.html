@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>位置</title>
+    <script type="text/javascript">
+      function iniMap(){
+
+        const myLatLng = {lat:position.coords.latitude, lng:position.coords.longitude};
+        alert(lat);
+        var map = new google.maps.Map(document.getElementId("map"),
+          {
+            zoom:4,
+            center:myLatLng,
+          });
+
+        var marker = new google.maps.Marker({
+          position: myLatLng,
+          map,
+          title:"Hi",
+        });
+
+      }
+
+      function getLocation(){
+        if (navigator.geolocation) {
+          var options = { enableHighAccuracy: true, maximumAge: 1000, timeout: 5000 };
+          navigator.geolocation.getCurrentPosition(showPosition, error, options);
+        }else{
+          alert("Geolocation is not supported by this browser.");
+        }
+      }
+
+      function showPosition(position){
+        alert("success");
+        // var lat = position.coords.latitude;
+        // var lng = position.coords.longitude;
+        // console.log(lat,lng);
+        // alert(lat,lng);
+      }
+
+      function error(err){
+        console.log(err);
+        alert("error");
+      }
+
+      function myMap(){
+        var mapProps = {
+          center: new google.maps.LatLng(21,121),
+          zoom:5,
+        };
+
+        var map = new google.maps.Map(document.getElementById("googlemap"), mapProps);
+
+      }
+    </script>
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&callback=myMap"></script> -->
+  </head>
+  <body>
+    <div class="body">
+          <h2>抓取當前位置的練習</h2>
+          <!-- <div id="map"></div> -->
+          <button type="button" name="button" onclick="getLocation();">取得當前位置</button>
+    </div>
+    <div id="googlemap" style="width:50%; height:30%;">
+
+    </div>
+  </body>
+</html>
