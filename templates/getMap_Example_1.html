@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Get my location</title>
+  </head>
+  <script type="text/javascript">
+    function getMyLocation(){
+      var options = {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+      };
+      if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(success, error, options);
+      }else{
+        alert("Geolocation is not supported by this browser.");
+      }
+
+
+      function success(position){
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+        var accuracy = position.coords.accuracy;
+        // alert("latitude:" + lat + ", longitude:" + lng + ", accuracy:" + accuracy);
+        var location = lat +"," + lng;
+        var img_url = "https://maps.googleapis.com/maps/api/staticmap?center="+location+"&zoom=16&size=400x400&key=AIzaSyBu-916DdpKAjTmJNIgngS6HL_kDIKU0aU";
+        document.getElementById("mymap").innerHTML = "<img src='"+img_url+"'>";
+      }
+
+      function error(err){
+        alert("error:" + err.code + "," + err.message);
+      }
+    }
+
+  </script>
+  <body>
+    <div class="">get my location</div>
+    <button type="button" name="button" onclick="getMyLocation();">Start!</button>
+    <div class="" id="mymap"></div>
+  </body>
+</html>

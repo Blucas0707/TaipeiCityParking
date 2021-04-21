@@ -2,68 +2,71 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>位置</title>
+    <title>get Map example 2</title>
+    <style>
+      #map {
+        height: 100%;
+      }
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_Za7RqKvUuEg2Nln0EcpUVN3k2fZtDuE&callback=initMap"></script>
     <script type="text/javascript">
-      function iniMap(){
-
-        const myLatLng = {lat:position.coords.latitude, lng:position.coords.longitude};
-        alert(lat);
-        var map = new google.maps.Map(document.getElementId("map"),
-          {
-            zoom:4,
-            center:myLatLng,
-          });
-
-        var marker = new google.maps.Marker({
-          position: myLatLng,
-          map,
-          title:"Hi",
+      function initMap(){
+        //給定初始位置
+        var initial_latlng = { lat: 25.046891, lng: 121.516602 };
+        var map = new google.maps.Map(document.getElementById("map"),{
+          center:initial_latlng,
+          zoom:17,
         });
-
-      }
-
-      function getLocation(){
-        if (navigator.geolocation) {
-          var options = { enableHighAccuracy: true, maximumAge: 1000, timeout: 5000 };
-          navigator.geolocation.getCurrentPosition(showPosition, error, options);
-        }else{
-          alert("Geolocation is not supported by this browser.");
-        }
-      }
-
-      function showPosition(position){
-        alert("success");
-        // var lat = position.coords.latitude;
-        // var lng = position.coords.longitude;
-        // console.log(lat,lng);
-        // alert(lat,lng);
-      }
-
-      function error(err){
-        console.log(err);
-        alert("error");
-      }
-
-      function myMap(){
-        var mapProps = {
-          center: new google.maps.LatLng(21,121),
-          zoom:5,
-        };
-
-        var map = new google.maps.Map(document.getElementById("googlemap"), mapProps);
-
+        //marker
+        var marker = new google.maps.Marker({
+            position: initial_latlng,
+            map: map,
+        });
+      //   //更新現在位置
+      //   getlocation(map);
+      // }
+      // //取得現在位置
+      // function getlocation(map){
+      //   var options = {
+      //     enableHighAccuracy: true,
+      //     timeout: 5000,
+      //     maximumAge: 1000
+      //   };
+      //   if(navigator.geolocation){
+      //     navigator.geolocation.getCurrentPosition(success, error, options);
+      //   }else{
+      //     alert("Geolocation is not supported by this browser.");
+      //   }
+      //   function success(position){
+      //     var current_lat = position.coords.latitude;
+      //     var current_lng = position.coords.longitude;
+      //     var accuracy = position.coords.accuracy;
+      //     // alert("latitude:" + lat + ", longitude:" + lng + ", accuracy:" + accuracy);
+      //     var current_location = {
+      //       lat:current_lat,
+      //       lng:current_lng
+      //     };
+      //     var maker = new google.maps.Marker({
+      //       position: current_location,
+      //       map:map,
+      //     });
+      //     map.setZoom(18);
+      //     map.setCenter(current_location);
+      //     return current_location;
+      //   }
+      //
+      //   function error(err){
+      //     alert("error:" + err.code + "," + err.message);
+      //   }
       }
     </script>
-    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&callback=myMap"></script> -->
   </head>
   <body>
-    <div class="body">
-          <h2>抓取當前位置的練習</h2>
-          <!-- <div id="map"></div> -->
-          <button type="button" name="button" onclick="getLocation();">取得當前位置</button>
-    </div>
-    <div id="googlemap" style="width:50%; height:30%;">
-
-    </div>
+    <div class="" id="map"></div>
   </body>
 </html>

@@ -4,6 +4,9 @@ from sql import SQLDB
 #convert tw97 to gs84
 import twd97
 
+#SQL
+mysql = SQLDB()
+
 class GET:
     def __init__(self):
         pass
@@ -11,61 +14,63 @@ class GET:
         # self.data_name = data_info.data_name
 
     def collect_data(self):
-        #read file
+        #read file parking lot information
         with open("臺北市停車場資訊.json", "r") as f:
             # read file and convert to dict
             parking_lot_info_content = json.loads(f.read())
 
+        # parking lot info
+        parking_lot_Updatetime = parking_lot_info_content["data"]["UPDATETIME"]
+        parking_lot_data = parking_lot_info_content["data"]["park"]
+
+        # get data and save to sql
+        for data in parking_lot_data:
+            para = []
+
+            #轉換停車場twd97 座標成gs84 經緯度
+            tw97x = float(data["tw97x"])
+            tw97y = float(data["tw97y"])
+            gs84 = twd97.towgs84(tw97x,tw97y)
+
+            #put data into para for sql
+            para.append(data["id"]) #id
+            para.append(data["area"]) #area
+            para.append(data["name"]) #name
+            para.append(1) #room
+            para.append(data["summary"]) #summary
+            para.append(data["tel"]) #tel
+            para.append(gs84[0]) #latitude
+            para.append(gs84[1]) #longitude
+            para.append(data["payex"]) #payex
+            para.append(data["totalcar"]) #totalcar
+            para.append(data["totalmotor"]) #totalmotor
+            para.append(data["totalbus"]) #totalbus
+            para.append(parking_lot_Updatetime) #update_time
+            para = tuple(para)
+            #save into sql
+            sql = "replace into taipei (id, area, name, room, summary, tel, latitude, longitude, payex, totalcar, totalmotor, totalbus, update_time) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            mysql.update(sql,para)
+
+        #read file, parking live data
         with open("剩餘停車位數.json", "r") as f:
             # read file and convert to dict
             parking_live_content = json.loads(f.read())
-
-        #parking lot info
-        parking_lot_Updatetime = parking_lot_info_content["data"]["UPDATETIME"]
-        parking_lot_data = parking_lot_info_content["data"]["park"]
 
         #parking live data
         parking_live_time = parking_live_content["data"]["UPDATETIME"]
         parking_live_data = parking_live_content["data"]["park"]
 
-        #New dict
-        Data_dict = {
-            "data":{
-                "INFO_UPDATETIME":"",
-                "LIVE_UPDATETIME":"",
-                "park":[]
-            }
-        }
+        #get data and save to sql
+        for data in parking_live_data:
+            para = []
 
-        #save update time
-        Data_dict["data"]["INFO_UPDATETIME"] = parking_lot_Updatetime
-        Data_dict["data"]["LIVE_UPDATETIME"] = parking_live_time
+            # put data into para for sql
+            para.append(data["id"])  # id
+            para.append(data["availablecar"]) #availablecar
+            para.append(data["availablemotor"])  # availablemotor
+            para.append(data["availablebus"])  # availablebus
+            para.append(parking_live_time)  # update_time
+            # save into sql
+            sql = "replace into taipei_live (id, availablecar, availablemotor, availablebus, update_time) values (%s,%s,%s,%s,%s)"
+            mysql.update(sql, para)
 
-        for data in parking_lot_data:
-            #convert tw97 to gs84
-            tw97x = float(data["tw97x"])
-            tw97y = float(data["tw97y"])
-            gs84 = twd97.towgs84(tw97x,tw97y)
-            data["Xcord"] = gs84[0]
-            data["Ycord"] = gs84[1]
-
-            #delete tw97x, tw97y
-            data.pop("tw97x")
-            data.pop("tw97y")
-
-            #combine live data with parking lot info
-            dict = data
-            id = data["id"]
-            for live_data in parking_live_data:
-                if live_data["id"] == id:
-                    dict["availablecar"] = live_data["availablecar"]
-                    dict["availablemotor"] = live_data["availablemotor"]
-                    dict["availablebus"] = live_data["availablebus"]
-                    break
-            Data_dict["data"]["park"].append(dict)
-
-
-        #save file in json format
-        # open("TaipeiCtyParkingInfo.json", "w").write(json.dumps(Data_dict, ensure_ascii=False, indent = 4))
-        # jsonformat = json.dumps(Data_dict, ensure_ascii=False,sort_keys=False, indent = 4)
-        return Data_dict
