@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>get Map example 2</title>
+    <style>
+      #map {
+        height: 100%;
+      }
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_Za7RqKvUuEg2Nln0EcpUVN3k2fZtDuE&callback=initMap"></script>
+    <script type="text/javascript">
+      function initMap(){
+        //給定初始位置
+        var initial_latlng = { lat: 25.046891, lng: 121.516602 };
+        var map = new google.maps.Map(document.getElementById("map"),{
+          center:initial_latlng,
+          zoom:17,
+        });
+        //marker
+        var marker = new google.maps.Marker({
+            position: initial_latlng,
+            map: map
+        });
+        //更新現在位置
+        getlocation(map);
+      }
+      //取得現在位置
+      function getlocation(map){
+        var options = {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 1000
+        };
+        if(navigator.geolocation){
+          navigator.geolocation.getCurrentPosition(success, error, options);
+        }else{
+          alert("Geolocation is not supported by this browser.");
+        }
+        function success(position){
+          var current_lat = position.coords.latitude;
+          var current_lng = position.coords.longitude;
+          var accuracy = position.coords.accuracy;
+          // alert("latitude:" + lat + ", longitude:" + lng + ", accuracy:" + accuracy);
+          var current_location = {
+            lat:current_lat,
+            lng:current_lng
+          };
+          var maker = new google.maps.Marker({
+            position: current_location,
+            map:map,
+          });
+          map.setZoom(18);
+          map.setCenter(current_location);
+          return current_location;
+        }
+
+        function error(err){
+          alert("error:" + err.code + "," + err.message);
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="" id="map"></div>
+  </body>
+</html>
